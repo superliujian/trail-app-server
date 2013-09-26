@@ -1,3 +1,3 @@
 var srv = require("./srv");
 
-server.start();
+srv.start();
