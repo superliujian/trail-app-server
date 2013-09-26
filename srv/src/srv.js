@@ -1,10 +1,10 @@
 var http = require("http");
 var url = require("url");
-var mysql = require("db-mysql");
+var mysql = require("mysql");
 var fs = require("fs");
 var op = require("./op");
 
-var db;
+var conn;
 var details;
 var srv;
 var port = 8080;
@@ -20,7 +20,7 @@ function onRequest(request, response) {
 }
 
 function onClose() {
-  db.disconnect();
+  conn.destroy();
 }
 
 function start() {
@@ -38,7 +38,8 @@ function start() {
   srv.on("close", onClose);
 
   // Connect to the database
-  db = mysql.Database(details).connect(function (err) {
+  conn = mysql.createConnection(details);
+  conn.connect(function (err) {
     if (err) {
       throw err;
     }
