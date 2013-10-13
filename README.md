@@ -1,17 +1,12 @@
-trail-app
+trail-app-server
 ---------
 
-An android app for the Lancaster University nature trail.
+The server-side for the Lancaster University nature trail app. It is a Node.js HTTP server which mediates database access.  
 
 Branches
 --------
     master - Stable.  
-       dev - Untested code.
-
-Folder structure
-----------------
-    app - Android application.
-    srv - Node.js HTTP server which mediates database access.
+       dev - Not fully tested code.
 
 Legal
 -----

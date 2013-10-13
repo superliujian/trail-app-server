@@ -30,21 +30,22 @@ function start() {
       throw err;
     }
     details = JSON.parse(data);
+    console.log("Connecting database");
+
+    // Connect to the database
+    conn = mysql.createConnection(details);
+    conn.connect(function (err) {
+      if (err) {
+        throw err;
+      }
+      srv.listen(port); // Start when ready
+      console.log("Listening on port %d", port);
+    });
   });
 
   // Create the HTTP server
   srv = http.createServer();
   srv.on("request", onRequest);
   srv.on("close", onClose);
-
-  // Connect to the database
-  conn = mysql.createConnection(details);
-  conn.connect(function (err) {
-    if (err) {
-      throw err;
-    }
-    srv.listen(port); // Start when ready
-    console.log("Listening on port %d", port);
-  });
 }
 exports.start = start;
