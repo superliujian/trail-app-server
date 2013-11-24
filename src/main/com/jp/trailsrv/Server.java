@@ -17,6 +17,8 @@ import com.sun.net.httpserver.HttpServer;
  * @author Joshua Prendergast
  */
 public class Server {
+	private static final int MAX_SHUTDOWN_DELAY = 10;
+	private int port;
 	private HttpServer srv;
 	private Database database;
 	private CommentCache cache;
@@ -29,13 +31,14 @@ public class Server {
 	 */
 	public Server(int port) throws RuntimeException {
 		try {
+			this.port = port;
 			srv = HttpServer.create(new InetSocketAddress(port), 0);
 			srv.setExecutor(createExecutor());
 
 			database = new Database(loadProperties());
 			
-			cache = new CommentCache();
-			cache.reconstruct(database);
+			cache = new CommentCache("comment_cache.xml");
+			cache.rebuild(database);
 		} catch (IOException | SQLException | ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
@@ -58,8 +61,13 @@ public class Server {
 	 * Starts the server.
 	 */
 	public void start() {
-		Log.i("Server started");
+		Log.i("Server listening on port " + port);
 		srv.start();
+	}
+	
+	public void stop() {
+		Log.i("Stopping server...");
+		srv.stop(MAX_SHUTDOWN_DELAY);
 	}
 	
 	public void createContext(BaseHandler handler) {
@@ -68,5 +76,9 @@ public class Server {
 	
 	public Database getDatabase() {
 		return database;
+	}
+	
+	public CommentCache getCommentCache() {
+		return cache;
 	}
 }

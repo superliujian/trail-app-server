@@ -13,7 +13,7 @@ import java.nio.charset.Charset;
 public class Util {
 	/**
 	 * Converts an input stream into its String equivalent. This method may block.
-	 * The underlying stream is closed by this method.
+	 * The underlying stream is fully exhausted and closed by this method.
 	 * @param in
 	 * 		the input stream
 	 * @param charset

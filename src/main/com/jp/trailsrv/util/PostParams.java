@@ -25,8 +25,11 @@ public class PostParams {
 		params = new HashMap<>();
 		try {
 			if (!ex.getRequestMethod().equalsIgnoreCase("POST")) {
-				throw new IllegalArgumentException("Not a POST");
+				throw new IllegalArgumentException("Expected RequestMethod = POST");
 			}
+			/*if (!ex.getRequestHeaders().get("Content-Type").equals("application/x-www-form-urlencoded")) {
+				throw new IllegalArgumentException("Expected Context-Type = application/x-www-form-urlencoded");
+			}*/
 			String body = Util.streamToString(ex.getRequestBody());
 			Iterable<String> pairs = Splitter.on('&').trimResults().split(body);
 			for (String str : pairs) {

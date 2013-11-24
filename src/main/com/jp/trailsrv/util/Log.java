@@ -1,6 +1,5 @@
 package com.jp.trailsrv.util;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.ConsoleHandler;
@@ -15,7 +14,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class Log {
 	private static Logger logger;
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("h:mma '('E dd/MM/yy')'");
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm:ssa '('E dd/MM/yy')'");
 	
 	static {
 		logger = Logger.getLogger("trail-srv");
@@ -26,7 +25,7 @@ public class Log {
 		handler.setFormatter(new SimpleFormatter() {
 			@Override
 			public synchronized String format(LogRecord record) {
-				return String.format("%s %s: %s",
+				return String.format("%s %s: %s%n",
 						dateFormat.format(new Date(record.getMillis())),
 						record.getLevel(),
 						record.getMessage());
@@ -44,11 +43,15 @@ public class Log {
 		logger.severe(message);
 	}
 	
+	public static void e(String message, Throwable throwable) {
+		logger.log(Level.SEVERE, message, throwable);
+	}
+	
 	public static void i(String message) {
 		logger.info(message);
 	}
 	
 	public static void v(String message) {
-		logger.fine(message);
+		logger.info(message); // FIXME
 	}
 }
