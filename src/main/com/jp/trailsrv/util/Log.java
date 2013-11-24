@@ -1,0 +1,54 @@
+package com.jp.trailsrv.util;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
+/**
+ * Handles logging.
+ * @author Joshua Prendergast
+ */
+public class Log {
+	private static Logger logger;
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("h:mma '('E dd/MM/yy')'");
+	
+	static {
+		logger = Logger.getLogger("trail-srv");
+		logger.setLevel(Level.ALL);
+		
+		// Default behaviour displays a long info line; replace this with a nice timestamp
+		ConsoleHandler handler = new ConsoleHandler();
+		handler.setFormatter(new SimpleFormatter() {
+			@Override
+			public synchronized String format(LogRecord record) {
+				return String.format("%s %s: %s",
+						dateFormat.format(new Date(record.getMillis())),
+						record.getLevel(),
+						record.getMessage());
+			}
+		});
+		logger.setUseParentHandlers(false);
+		logger.addHandler(handler);
+	}
+	
+	public static void w(String message) {
+		logger.warning(message);
+	}
+	
+	public static void e(String message) {
+		logger.severe(message);
+	}
+	
+	public static void i(String message) {
+		logger.info(message);
+	}
+	
+	public static void v(String message) {
+		logger.fine(message);
+	}
+}

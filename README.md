@@ -1,7 +1,7 @@
 trail-app-server
 ---------
 
-The server-side for the Lancaster University nature trail app. It is a Node.js HTTP server which mediates database access.  
+The server-side for the Lancaster University nature trail app. It is RESTful Java HTTP server which mediates database access.  
 
 Branches
 --------
