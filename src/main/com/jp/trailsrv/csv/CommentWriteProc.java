@@ -10,29 +10,26 @@ import au.com.bytecode.opencsv.CSVWriter;
  * @author Joshua Prendergast
  */
 public class CommentWriteProc implements CSVWriteProc {
-	private Comment comment;
-	
-	public CommentWriteProc() {
-	}
-	
-	public CommentWriteProc(Comment comment) {
-		this.comment = comment;
-	}
-	
-	@Override
-	public void process(CSVWriter writer) throws NullPointerException {
-		writer.writeNext(String.valueOf(comment.id),
-				comment.latitude.toString(),
-				comment.longitude.toString(),
-				comment.body,
-				comment.timestamp.toString());
-	}
+    private Comment comment;
 
-	public Comment getComment() {
-		return comment;
-	}
+    public CommentWriteProc() {
+    }
 
-	public void setComment(Comment comment) {
-		this.comment = comment;
-	}
+    public CommentWriteProc(Comment comment) {
+        this.comment = comment;
+    }
+
+    @Override
+    public void process(CSVWriter writer) throws NullPointerException {
+        writer.writeNext(String.valueOf(comment.id), comment.latitude.toString(), comment.longitude.toString(), comment.body,
+                comment.timestamp.toString());
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
 }
