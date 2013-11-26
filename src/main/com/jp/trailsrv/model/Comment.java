@@ -15,6 +15,6 @@ public class Comment {
         this.latitude = latitude;
         this.longitude = longitude;
         this.body = body;
-        this.timestamp = timestamp;
+        this.timestamp = (Timestamp) timestamp.clone();
     }
 }

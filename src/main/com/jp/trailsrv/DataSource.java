@@ -18,7 +18,7 @@ import com.jp.trailsrv.model.Comment;
 import com.jp.trailsrv.util.Processor;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
-public class Database {
+public class DataSource {
     private ExecutorService executor;
     private ComboPooledDataSource source;
 
@@ -27,7 +27,7 @@ public class Database {
      * @param properties the connection properties
      * @throws ClassNotFoundException if the MySQL JDBC driver is not found
      */
-    public Database(Map<String, String> properties) throws ClassNotFoundException {
+    public DataSource(Map<String, String> properties) throws ClassNotFoundException {
         setupConnector(properties);
         executor = Executors.newCachedThreadPool();
     }

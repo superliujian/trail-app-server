@@ -27,7 +27,9 @@ public class CommentCache {
 
     public CommentCache(String path) {
         file = new File(path);
-        file.getParentFile().mkdirs(); // Make folder structure
+        if (!file.getParentFile().mkdirs()) { // Make folder structure
+            throw new RuntimeException(); 
+        }
     }
 
     /**
@@ -50,7 +52,7 @@ public class CommentCache {
      * @throws SQLException if a database error occurs
      * @throws IOException if an stream IO error occurs
      */
-    public synchronized void rebuild(Database database) throws IOException, SQLException {
+    public synchronized void rebuild(DataSource database) throws IOException, SQLException {
         try (CSVWriter writer = new CSVWriter(new FileWriter(file))) {
             // Load comments from database
             Log.i("Rebuilding '" + file.getName() + "'");

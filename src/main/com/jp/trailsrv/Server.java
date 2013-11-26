@@ -20,7 +20,7 @@ public class Server {
     private static final int MAX_SHUTDOWN_DELAY = 10;
     private int port;
     private HttpServer srv;
-    private Database database;
+    private DataSource database;
     private CommentCache cache;
 
     /**
@@ -35,7 +35,7 @@ public class Server {
             srv.setExecutor(createExecutor());
 
             Log.i("Connecting to database...");
-            database = new Database(loadProperties());
+            database = new DataSource(loadProperties());
 
             cache = new CommentCache("cache/comment_cache.xml");
             cache.rebuild(database);
@@ -74,7 +74,7 @@ public class Server {
         srv.createContext(handler.getContextPath(), handler);
     }
 
-    public Database getDatabase() {
+    public DataSource getDatabase() {
         return database;
     }
 

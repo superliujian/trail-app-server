@@ -1,6 +1,7 @@
-package com.jp.trailsrv.util;
+package com.jp.trailsrv.net;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import com.jp.trailsrv.util.Util;
 import com.sun.net.httpserver.HttpExchange;
 
 public class PostParams {
@@ -16,23 +18,18 @@ public class PostParams {
     /**
      * Converts the text stream of a HTTP POST from URL-encoded parameters to a
      * map of parameters.
-     * @param ex the HTTP POST
+     * @param in the HTTP POST request body. This is consumed and closed.
      * @throws IOException if an IO error occurs
      * @throws IllegalArgumentException if the parameters contain a duplicate value
      */
-    public PostParams(HttpExchange ex) throws IOException, IllegalArgumentException {
+    public PostParams(InputStream in) throws IOException {
+        parse(in);
+    }
+    
+    public void parse(InputStream in) throws IOException {
         params = new HashMap<>();
         try {
-            if (!ex.getRequestMethod().equalsIgnoreCase("POST")) {
-                throw new IllegalArgumentException("Expected RequestMethod = POST");
-            }
-            /*
-             * if (!ex.getRequestHeaders().get("Content-Type").equals(
-             * "application/x-www-form-urlencoded")) { throw new
-             * IllegalArgumentException
-             * ("Expected Context-Type = application/x-www-form-urlencoded"); }
-             */
-            String body = Util.streamToString(ex.getRequestBody());
+            String body = Util.streamToString(in);
             Iterable<String> pairs = Splitter.on('&').trimResults().split(body);
             for (String str : pairs) {
                 Iterable<String> kv = Splitter.on('=').trimResults().split(str);
