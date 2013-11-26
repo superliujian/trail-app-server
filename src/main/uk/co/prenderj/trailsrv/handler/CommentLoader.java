@@ -1,9 +1,10 @@
-package com.jp.trailsrv.handler;
+package uk.co.prenderj.trailsrv.handler;
 
 import java.io.IOException;
 
-import com.jp.trailsrv.Server;
-import com.jp.trailsrv.net.HttpExchangeWrapper;
+import uk.co.prenderj.trailsrv.Server;
+import uk.co.prenderj.trailsrv.net.HttpExchangeWrapper;
+
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 

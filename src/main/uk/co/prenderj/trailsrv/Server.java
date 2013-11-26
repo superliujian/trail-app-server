@@ -1,4 +1,4 @@
-package com.jp.trailsrv;
+package uk.co.prenderj.trailsrv;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -8,8 +8,9 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import com.jp.trailsrv.handler.BaseHandler;
-import com.jp.trailsrv.util.Log;
+import uk.co.prenderj.trailsrv.handler.BaseHandler;
+import uk.co.prenderj.trailsrv.util.Log;
+
 import com.sun.net.httpserver.HttpServer;
 
 /**

@@ -1,4 +1,4 @@
-package com.jp.trailsrv.net;
+package uk.co.prenderj.trailsrv.net;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,9 +7,10 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.co.prenderj.trailsrv.util.Util;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import com.jp.trailsrv.util.Util;
 import com.sun.net.httpserver.HttpExchange;
 
 public class PostParams {

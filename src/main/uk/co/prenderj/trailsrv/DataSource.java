@@ -1,4 +1,4 @@
-package com.jp.trailsrv;
+package uk.co.prenderj.trailsrv;
 
 import java.beans.PropertyVetoException;
 import java.math.BigDecimal;
@@ -14,8 +14,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import com.jp.trailsrv.model.Comment;
-import com.jp.trailsrv.util.Processor;
+
+import uk.co.prenderj.trailsrv.model.Comment;
+import uk.co.prenderj.trailsrv.util.Processor;
+
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class DataSource {

@@ -1,4 +1,4 @@
-package com.jp.trailsrv.util;
+package uk.co.prenderj.trailsrv.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

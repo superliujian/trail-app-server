@@ -9,7 +9,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.jp.trailsrv.Program;
+import uk.co.prenderj.trailsrv.Program;
+
 
 public class AddCommentTest {
     private static final String USER_AGENT = "Mozilla/5.0";

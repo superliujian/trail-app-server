@@ -1,4 +1,4 @@
-package com.jp.trailsrv.handler;
+package uk.co.prenderj.trailsrv.handler;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -9,14 +9,15 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import uk.co.prenderj.trailsrv.Server;
+import uk.co.prenderj.trailsrv.csv.CommentWriteProc;
+import uk.co.prenderj.trailsrv.model.Comment;
+import uk.co.prenderj.trailsrv.net.HttpExchangeWrapper;
+import uk.co.prenderj.trailsrv.net.PostParams;
+import uk.co.prenderj.trailsrv.util.Log;
+
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.jp.trailsrv.Server;
-import com.jp.trailsrv.csv.CommentWriteProc;
-import com.jp.trailsrv.model.Comment;
-import com.jp.trailsrv.net.HttpExchangeWrapper;
-import com.jp.trailsrv.net.PostParams;
-import com.jp.trailsrv.util.Log;
 
 public class CommentAdder extends BaseHandler {
     public CommentAdder(Server srv) {

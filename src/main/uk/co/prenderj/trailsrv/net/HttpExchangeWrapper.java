@@ -1,4 +1,4 @@
-package com.jp.trailsrv.net;
+package uk.co.prenderj.trailsrv.net;
 
 import java.io.IOException;
 import java.io.InputStream;

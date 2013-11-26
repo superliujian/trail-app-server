@@ -1,4 +1,4 @@
-package com.jp.trailsrv.model;
+package uk.co.prenderj.trailsrv.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;

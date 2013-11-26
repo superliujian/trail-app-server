@@ -1,4 +1,4 @@
-package com.jp.trailsrv.util;
+package uk.co.prenderj.trailsrv.util;
 
 /**
  * Generic interface for a method which processes some value.

@@ -1,7 +1,7 @@
-package com.jp.trailsrv;
+package uk.co.prenderj.trailsrv;
 
-import com.jp.trailsrv.handler.CommentAdder;
-import com.jp.trailsrv.handler.CommentLoader;
+import uk.co.prenderj.trailsrv.handler.CommentAdder;
+import uk.co.prenderj.trailsrv.handler.CommentLoader;
 
 public class Program {
     private static Server srv;

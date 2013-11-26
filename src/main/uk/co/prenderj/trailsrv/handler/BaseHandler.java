@@ -1,4 +1,4 @@
-package com.jp.trailsrv.handler;
+package uk.co.prenderj.trailsrv.handler;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -6,10 +6,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import uk.co.prenderj.trailsrv.Server;
+import uk.co.prenderj.trailsrv.net.HttpExchangeWrapper;
+import uk.co.prenderj.trailsrv.util.Log;
+
 import com.google.common.collect.Iterables;
-import com.jp.trailsrv.Server;
-import com.jp.trailsrv.net.HttpExchangeWrapper;
-import com.jp.trailsrv.util.Log;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 

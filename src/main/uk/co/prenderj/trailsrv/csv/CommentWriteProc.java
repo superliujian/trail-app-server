@@ -1,6 +1,6 @@
-package com.jp.trailsrv.csv;
+package uk.co.prenderj.trailsrv.csv;
 
-import com.jp.trailsrv.model.Comment;
+import uk.co.prenderj.trailsrv.model.Comment;
 
 import au.com.bytecode.opencsv.CSVWriteProc;
 import au.com.bytecode.opencsv.CSVWriter;

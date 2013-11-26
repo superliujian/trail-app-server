@@ -1,4 +1,4 @@
-package com.jp.trailsrv;
+package uk.co.prenderj.trailsrv;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,12 +11,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import uk.co.prenderj.trailsrv.csv.CommentWriteProc;
+import uk.co.prenderj.trailsrv.model.Comment;
+import uk.co.prenderj.trailsrv.util.Log;
+import uk.co.prenderj.trailsrv.util.Processor;
+
 import au.com.bytecode.opencsv.CSVWriter;
 
-import com.jp.trailsrv.csv.CommentWriteProc;
-import com.jp.trailsrv.model.Comment;
-import com.jp.trailsrv.util.Log;
-import com.jp.trailsrv.util.Processor;
 
 /**
  * Maintains a local XML file of all comments stored in the database.
