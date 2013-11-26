@@ -21,7 +21,11 @@ public abstract class BaseHandler implements HttpHandler {
 	@Override
 	public void handle(HttpExchange ex) throws IOException {
 		Log.v(String.format("Request: method = %s, context = %s", ex.getRequestMethod(), getContextPath())); // Log request
-		call(ex);
+		try {
+			call(ex);
+		} finally {
+			ex.close();
+		}
 	}
 
 	public final Server getServer() {

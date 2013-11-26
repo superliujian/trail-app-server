@@ -1,9 +1,8 @@
 package com.jp.trailsrv.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.AfterClass;

@@ -2,19 +2,21 @@ package com.jp.trailsrv;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.concurrent.ExecutionException;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import au.com.bytecode.opencsv.CSVWriter;
+
+import com.jp.trailsrv.csv.CommentWriteProc;
 import com.jp.trailsrv.model.Comment;
 import com.jp.trailsrv.util.Log;
+import com.jp.trailsrv.util.Processor;
 
 /**
  * Maintains a local XML file of all comments stored in the database.
@@ -24,11 +26,12 @@ public class CommentCache {
 	private File file;
 	
 	public CommentCache(String path) {
-		this.file = new File(path);
+		file = new File(path);
+		file.getParentFile().mkdirs(); // Make folder structure
 	}
 	
 	/**
-	 * Writes the cache into an output stream. The output stream is closed after writing.
+	 * Writes the cache into an output stream.
 	 * @param out
 	 * 		the output stream
 	 * @throws IOException if an I/O error occurs
@@ -39,8 +42,6 @@ public class CommentCache {
 			while ((c = in.read()) != -1) {
 				out.write(c);
 			}
-		} finally {
-			out.close();
 		}
 	}
 	
@@ -49,59 +50,40 @@ public class CommentCache {
 	 * @param database
 	 * 		the source database
 	 * @throws SQLException if a database error occurs
-	 * @throws IOException if a read error occurs (database or stream related)
+	 * @throws IOException if an stream IO error occurs
 	 */
 	public synchronized void rebuild(Database database) throws IOException, SQLException {
-		XMLStreamWriter writer = null;
-		try {
+		try (CSVWriter writer = new CSVWriter(new FileWriter(file))) {
 			// Load comments from database
-			Collection<Comment> comments = database.loadComments().get();
-			Log.i("Rebuilding '" + file.getName() + "' with " + comments.size() + " comments");
-			
-			try (OutputStream out = new FileOutputStream(file)){
-				writer = startWrite(out);
-				for (Comment comment : comments) {
-					comment.writeAsXml(writer);
-					// writer.flush();
+			Log.i("Rebuilding '" + file.getName() + "'");
+			database.loadComments(new Processor<ResultSet>() {
+				@Override
+				public void process(ResultSet rs) throws SQLException {
+					int i = 0;
+					CommentWriteProc proc = new CommentWriteProc();
+					while (rs.next()) {
+						Comment c = new Comment(rs.getLong("comment_id"), rs.getBigDecimal("lat"), rs.getBigDecimal("lng"), rs.getString("body"), rs.getTimestamp("timestamp"));
+						proc.setComment(c);
+						writer.write(proc);
+						i++;
+					}
+					Log.i("Loaded " + i + " comments");
 				}
-				endWrite(writer);
-			} finally {
-				if (writer != null)
-					writer.close(); // This doesn't close the underlying output stream
-			}
-		} catch (InterruptedException | ExecutionException e) {
+			}).get(10, TimeUnit.SECONDS);
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
 			throw new SQLException(e);
-		} catch (XMLStreamException e) {
-			throw new IOException(e);
 		}
 	}
 	
+	/**
+	 * Adds a single comment to the cache.
+	 * @param comment
+	 * 		the comment
+	 * @throws IOException if a write error occurs
+	 */
 	public synchronized void append(Comment comment) throws IOException {
-		throw new IllegalStateException("Not yet implemented");
-	}
-	
-	protected XMLStreamWriter createStreamWriter(OutputStream out) throws RuntimeException {
-		try {
-			return XMLOutputFactory.newInstance().createXMLStreamWriter(out, "UTF-8");
-		} catch (XMLStreamException | FactoryConfigurationError e) {
-			throw new RuntimeException(e);
+		try (CSVWriter writer = new CSVWriter(new FileWriter(file, true))) {
+			writer.write(new CommentWriteProc(comment));
 		}
-	}
-	
-	protected XMLStreamWriter startWrite(OutputStream out) throws IOException, XMLStreamException {
-		XMLStreamWriter writer = createStreamWriter(out);
-		if (file.exists()) {
-			file.delete();
-			file.createNewFile();
-		}
-		
-		writer.writeStartDocument("UTF-8", "1.0");
-		writer.writeStartElement("response");
-		return writer;
-	}
-	
-	protected void endWrite(XMLStreamWriter writer) throws XMLStreamException {
-		writer.writeEndElement();
-		writer.flush();
 	}
 }

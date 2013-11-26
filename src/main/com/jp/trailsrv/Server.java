@@ -35,9 +35,10 @@ public class Server {
 			srv = HttpServer.create(new InetSocketAddress(port), 0);
 			srv.setExecutor(createExecutor());
 
+			Log.i("Connecting to database...");
 			database = new Database(loadProperties());
 			
-			cache = new CommentCache("comment_cache.xml");
+			cache = new CommentCache("cache/comment_cache.xml");
 			cache.rebuild(database);
 		} catch (IOException | SQLException | ClassNotFoundException e) {
 			throw new RuntimeException(e);

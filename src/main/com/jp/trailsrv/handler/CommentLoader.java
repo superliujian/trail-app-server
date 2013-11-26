@@ -15,7 +15,7 @@ public class CommentLoader extends BaseHandler {
 	public void call(HttpExchange ex) throws IOException {
 		if (ex.getRequestMethod().equals("GET")) {
 			Headers headers = ex.getResponseHeaders();
-			headers.set("Content-Type", "application/xml");
+			headers.set("Content-Type", "text/csv");
 			ex.sendResponseHeaders(200, 0);
 			getServer().getCommentCache().write(ex.getResponseBody());
 		}

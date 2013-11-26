@@ -8,6 +8,8 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import com.google.common.base.Throwables;
+
 /**
  * Handles logging.
  * @author Joshua Prendergast
@@ -25,10 +27,20 @@ public class Log {
 		handler.setFormatter(new SimpleFormatter() {
 			@Override
 			public synchronized String format(LogRecord record) {
-				return String.format("%s %s: %s%n",
-						dateFormat.format(new Date(record.getMillis())),
-						record.getLevel(),
-						record.getMessage());
+				Throwable thrown = record.getThrown();
+				StringBuilder out = new StringBuilder();
+				out.append(dateFormat.format(new Date(record.getMillis())))
+					.append(' ')
+					.append(record.getLevel())
+					.append(": ")
+					.append(record.getMessage());
+				if (thrown != null) {
+					out.append(" <")
+						.append(Throwables.getStackTraceAsString(thrown))
+						.append(">");
+				}
+				out.append(System.lineSeparator());
+				return out.toString();
 			}
 		});
 		logger.setUseParentHandlers(false);

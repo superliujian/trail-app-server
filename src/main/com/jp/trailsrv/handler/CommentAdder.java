@@ -2,7 +2,8 @@ package com.jp.trailsrv.handler;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -29,12 +30,12 @@ public class CommentAdder extends BaseHandler {
 			BigDecimal lng = new BigDecimal(params.get("lng"));
 			String body = params.get("body");
 			
-			if (getServer().getDatabase().addComment(new Comment(lat, lng, body)).get(10, TimeUnit.SECONDS) == null) {
-				// TODO Send success message
-				Log.v("Successfully added comment");
-				getServer().getCommentCache().rebuild(getServer().getDatabase()); // XXX Replace this with an append
-			}
-		} catch (SQLException | IllegalArgumentException | InterruptedException | ExecutionException e) {
+			Comment comment = getServer().getDatabase().addComment(lat, lng, body, new Timestamp(new Date().getTime())).get(10, TimeUnit.SECONDS);
+			
+			// TODO Send success message
+			Log.v("Successfully added comment");
+			getServer().getCommentCache().append(comment);
+		} catch (IllegalArgumentException | InterruptedException | ExecutionException e) {
 			Log.e("Failed to add comment", e);
 			// TODO Send error message
 			// TODO Do not include SQL error details in response
