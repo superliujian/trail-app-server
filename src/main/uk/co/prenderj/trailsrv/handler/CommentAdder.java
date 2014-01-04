@@ -21,7 +21,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 public class CommentAdder extends BaseHandler {
     public CommentAdder(Server srv) {
-        super(srv, "/comment/add");
+        super(srv, "/comments");
     }
 
     @Override
@@ -37,9 +37,7 @@ public class CommentAdder extends BaseHandler {
             
             // Store comment in database and cache
             Comment comment = getServer().getDatabase().addComment(lat, lng, body, new Timestamp(new Date().getTime())).get(10, TimeUnit.SECONDS);
-
             Log.v("Successfully added comment");
-            getServer().getCommentCache().append(comment);
             
             // Response
             try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(ex.getResponseBody()))) {

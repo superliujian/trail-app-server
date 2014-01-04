@@ -22,7 +22,6 @@ public class Server {
     private int port;
     private HttpServer srv;
     private DataSource database;
-    private CommentCache cache;
 
     /**
      * Creates a new instance which is not started and has no handlers.
@@ -37,10 +36,7 @@ public class Server {
 
             Log.i("Connecting to database...");
             database = new DataSource(loadProperties());
-
-            cache = new CommentCache("cache/comment_cache.xml");
-            cache.rebuild(database);
-        } catch (IOException | SQLException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -77,9 +73,5 @@ public class Server {
 
     public DataSource getDatabase() {
         return database;
-    }
-
-    public CommentCache getCommentCache() {
-        return cache;
     }
 }

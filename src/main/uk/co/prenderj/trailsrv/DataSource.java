@@ -15,8 +15,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import uk.co.prenderj.trailshared.function.Processor;
+import uk.co.prenderj.trailshared.function.Transformer;
 import uk.co.prenderj.trailsrv.model.Comment;
-import uk.co.prenderj.trailsrv.util.Processor;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -101,12 +102,11 @@ public class DataSource {
             @Override
             public Collection<?> call() throws Exception {
                 try (Connection conn = source.getConnection();
-                        PreparedStatement ps = conn
-                                .prepareStatement("SELECT * FROM comment", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+                        PreparedStatement ps = conn.prepareStatement("SELECT * FROM comment", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
                     ps.setFetchSize(Integer.MIN_VALUE); // Retrieve row by row to avoid overloading heap
 
                     ResultSet rs = ps.executeQuery();
-                    proc.process(rs);
+                    proc.call(rs);
                     return null;
                 }
             }
