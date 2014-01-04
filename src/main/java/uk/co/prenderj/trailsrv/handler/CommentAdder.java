@@ -43,7 +43,7 @@ public class CommentAdder extends BaseHandler {
             try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(ex.getResponseBody()))) {
                 ex.setContentType("text/plain");
                 ex.sendResponseHeaders(200, 0);
-                writer.write(new CommentWriteProc(comment)); // Respond with created resource
+                new CommentWriteProc(comment).process(writer); // Respond with created resource
             }
         } catch (IllegalArgumentException e) {
             ex.sendResponseHeaders(400); // Bad request
