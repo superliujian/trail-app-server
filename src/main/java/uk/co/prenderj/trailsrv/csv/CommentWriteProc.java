@@ -1,14 +1,13 @@
 package uk.co.prenderj.trailsrv.csv;
 
 import uk.co.prenderj.trailsrv.model.Comment;
-import au.com.bytecode.opencsv.CSVWriteProc;
 import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Writes a comment to a CSV writer.
  * @author Joshua Prendergast
  */
-public class CommentWriteProc implements CSVWriteProc {
+public class CommentWriteProc {
     private Comment comment;
 
     public CommentWriteProc() {
@@ -18,7 +17,6 @@ public class CommentWriteProc implements CSVWriteProc {
         this.comment = comment;
     }
 
-    @Override
     public void process(CSVWriter writer) throws NullPointerException {
     	String[] out = new String[] { String.valueOf(comment.id), comment.latitude.toString(), comment.longitude.toString(), comment.body,
                 comment.timestamp.toString() };

@@ -15,7 +15,7 @@
   </properties>
   
   <build>
-      <plugins>
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -24,6 +24,18 @@
           <source>1.7</source>
           <target>1.7</target>
         </configuration>
+      </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+              <archive>
+                  <manifest>
+                      <addClasspath>true</addClasspath>
+                      <mainClass>uk.co.prenderj.trailsrv.Program</mainClass>
+                  </manifest>
+              </archive>
+          </configuration>
       </plugin>
     </plugins>
   </build>
