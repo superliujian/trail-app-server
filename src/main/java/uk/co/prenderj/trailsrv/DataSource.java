@@ -15,9 +15,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import uk.co.prenderj.trailshared.function.Processor;
-import uk.co.prenderj.trailshared.function.Transformer;
 import uk.co.prenderj.trailsrv.model.Comment;
+import uk.co.prenderj.trailsrv.util.Processor;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -64,18 +63,19 @@ public class DataSource {
      * @param timestamp the comment date of receipt
      * @return a Future which contains the new comment
      */
-    public Future<Comment> addComment(final BigDecimal latitude, final BigDecimal longitude, final String body, final Timestamp timestamp) {
+    public Future<Comment> addComment(final double latitude, final double longitude, final String title, final String body, final Timestamp timestamp) {
         return executor.submit(new Callable<Comment>() {
             @Override
             public Comment call() throws SQLException {
                 // Insert a new comment using prepared statements
                 try (Connection conn = source.getConnection();
-                        PreparedStatement insert = conn.prepareStatement("INSERT INTO comment (lat, lng, body, timestamp) VALUES(?, ?, ?, ?)");
+                        PreparedStatement insert = conn.prepareStatement("INSERT INTO comment (lat, lng, title, body, timestamp) VALUES(?, ?, ?, ?)");
                         PreparedStatement select = conn.prepareStatement("SELECT LAST_INSERT_ID()")) {
-                    insert.setBigDecimal(1, latitude);
-                    insert.setBigDecimal(2, longitude);
-                    insert.setString(3, body);
-                    insert.setTimestamp(4, timestamp);
+                    insert.setDouble(1, latitude);
+                    insert.setDouble(2, longitude);
+                    insert.setString(3, title);
+                    insert.setString(4, body);
+                    insert.setTimestamp(5, timestamp);
                     insert.executeUpdate();
 
                     /**
@@ -86,7 +86,7 @@ public class DataSource {
                      */
                     ResultSet rs = select.executeQuery();
                     rs.next();
-                    return new Comment(rs.getInt(1), latitude, longitude, body, timestamp);
+                    return new Comment(rs.getInt(1), latitude, longitude, title, body, timestamp);
                 }
             }
         });
@@ -101,19 +101,18 @@ public class DataSource {
      * @param proc the processor to run on the ResultSet
      * @return a Future which returns null on success
      */
-    public Future<?> findNearbyComments(final BigDecimal lat, final BigDecimal lng, final BigDecimal radius, final Processor<ResultSet> proc) {
+    public Future<?> findNearbyComments(final double lat, final double lng, final double radius, final Processor<ResultSet> proc) {
         return executor.submit(new Callable<Object>() {
             @Override
             public Collection<?> call() throws Exception {
                 try (Connection conn = source.getConnection();
-                        PreparedStatement ps = conn.prepareStatement("SELECT * FROM comment WHERE (lat - ?) * (lat - ?) + (lng - ?) * (lng - ?) < ? * ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+                        PreparedStatement ps = conn.prepareStatement("SELECT * FROM comment WHERE (lat - ?) * (lat - ?) + (lng - ?) * (lng - ?) < ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
                     ps.setFetchSize(Integer.MIN_VALUE); // Retrieve row by row to avoid overloading heap
-                    ps.setBigDecimal(1, lat);
-                    ps.setBigDecimal(2, lat);
-                    ps.setBigDecimal(3, lng);
-                    ps.setBigDecimal(4, lng);
-                    ps.setBigDecimal(5, radius);
-                    ps.setBigDecimal(6, radius);
+                    ps.setDouble(1, lat);
+                    ps.setDouble(2, lat);
+                    ps.setDouble(3, lng);
+                    ps.setDouble(4, lng);
+                    ps.setDouble(5, radius * radius);
 
                     ResultSet rs = ps.executeQuery();
                     proc.call(rs);

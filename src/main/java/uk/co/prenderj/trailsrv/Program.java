@@ -12,7 +12,7 @@ public class Program {
      * @throws Exception if any exception is uncaught
      */
     public static void main(String[] args) throws Exception {
-        srv = new Server(args.length > 0 ? args[0] : "server.properties"); // Override the properties path by providing an argument
+        srv = new Server(args.length > 0 ? args[0] : "cfg/server.properties"); // Override the properties path by providing an argument
         srv.createContext(new CommentAdder(srv));
         srv.createContext(new CommentLoader(srv));
         srv.start();

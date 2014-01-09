@@ -11,7 +11,6 @@ import uk.co.prenderj.trailsrv.util.Util;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import com.sun.net.httpserver.HttpExchange;
 
 public class PostParams {
     private Map<String, String> params;

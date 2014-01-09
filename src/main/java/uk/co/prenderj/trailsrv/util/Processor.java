@@ -1,4 +1,4 @@
-package uk.co.prenderj.trailshared.function;
+package uk.co.prenderj.trailsrv.util;
 
 /**
  * Generic interface for a method which processes some value.

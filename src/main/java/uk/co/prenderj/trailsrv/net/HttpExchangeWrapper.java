@@ -90,7 +90,8 @@ public class HttpExchangeWrapper {
         return ex.getResponseHeaders();
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return ex.hashCode();
     }
     
@@ -115,11 +116,13 @@ public class HttpExchangeWrapper {
         ex.setStreams(in, out);
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return ex.toString();
     }
     
-    public boolean equals(Object o) {
+    @Override
+	public boolean equals(Object o) {
         return ex.equals(o);
     }
 }

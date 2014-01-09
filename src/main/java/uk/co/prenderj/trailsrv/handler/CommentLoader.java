@@ -1,5 +1,6 @@
 package uk.co.prenderj.trailsrv.handler;
 
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -7,28 +8,28 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import uk.co.prenderj.trailshared.function.Processor;
 import uk.co.prenderj.trailsrv.Server;
-import uk.co.prenderj.trailsrv.csv.CommentWriteProc;
+import uk.co.prenderj.trailsrv.csv.CommentWriter;
 import uk.co.prenderj.trailsrv.model.Comment;
 import uk.co.prenderj.trailsrv.net.HttpExchangeWrapper;
+import uk.co.prenderj.trailsrv.util.Processor;
 
 public class CommentLoader extends BaseHandler {
-	private static final BigDecimal RADIUS = new BigDecimal("0.50");
+	private static final double RADIUS = 0.5d;
 
 	public CommentLoader(Server srv) {
 		super(srv, "/comments/nearby", "GET");
 	}
 
 	@Override
-	public void call(HttpExchangeWrapper ex) throws Exception {
+	public void call(final HttpExchangeWrapper ex) throws Exception {
 		try {
 			// Grab the last two segments of the URI as longitude and latitude
 			// e.g. www.example.com/comments/nearby/25/-2.5
 			URI uri = ex.getRequestURI();
 			String[] segments = uri.getPath().split("/");
-			BigDecimal lat = new BigDecimal(segments[3]);
-			BigDecimal lng = new BigDecimal(segments[4]);
+			double lat = Double.parseDouble(segments[3]);
+			double lng = Double.parseDouble(segments[4]);
 
 			// Response
 			try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(ex.getResponseBody()))) {
@@ -37,12 +38,9 @@ public class CommentLoader extends BaseHandler {
 				getServer().getDatabase().findNearbyComments(lat, lng, RADIUS, new Processor<ResultSet>() {
 					@Override
 					public void call(ResultSet rs) throws RuntimeException {
-						CommentWriteProc proc = new CommentWriteProc();
-						try {
-							while (rs.next()) {
-								proc.setComment(new Comment(rs.getInt("comment_id"), rs.getBigDecimal("lat"), rs.getBigDecimal("lng"), rs.getString("body"), rs.getTimestamp("timestamp")));
-							}
-						} catch (SQLException e) {
+						try (CommentWriter writer = new CommentWriter(new OutputStreamWriter(ex.getResponseBody()))) {
+							writer.writeNextComment(new Comment(rs.getInt("comment_id"), rs.getDouble("lat"), rs.getDouble("lng"), rs.getString("title"), rs.getString("body"), rs.getTimestamp("timestamp")));
+						} catch (SQLException | IOException e) {
 							throw new RuntimeException(e);
 						}
 					}
