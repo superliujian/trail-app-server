@@ -9,7 +9,7 @@ public class Comment {
     public final String title;
     public final String body;
     public final Timestamp timestamp;
-
+    
     public Comment(long id, double latitude, double longitude, String title, String body, Timestamp timestamp) {
         this.id = id;
         this.latitude = latitude;

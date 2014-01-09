@@ -33,65 +33,65 @@ public class HttpExchangeWrapper {
     public void setContentType(String contentType) {
         getResponseHeaders().set("Content-Type", contentType);
     }
-
+    
     public void close() {
         ex.close();
     }
-
+    
     public Object getAttribute(String key) {
         return ex.getAttribute(key);
     }
-
+    
     public HttpContext getHttpContext() {
         return ex.getHttpContext();
     }
-
+    
     public InetSocketAddress getLocalAddress() {
         return ex.getLocalAddress();
     }
-
+    
     public HttpPrincipal getPrincipal() {
         return ex.getPrincipal();
     }
-
+    
     public String getProtocol() {
         return ex.getProtocol();
     }
-
+    
     public InetSocketAddress getRemoteAddress() {
         return ex.getRemoteAddress();
     }
-
+    
     public InputStream getRequestBody() {
         return ex.getRequestBody();
     }
-
+    
     public Headers getRequestHeaders() {
         return ex.getRequestHeaders();
     }
-
+    
     public String getRequestMethod() {
         return ex.getRequestMethod();
     }
-
+    
     public URI getRequestURI() {
         return ex.getRequestURI();
     }
-
+    
     public OutputStream getResponseBody() {
         return ex.getResponseBody();
     }
-
+    
     public int getResponseCode() {
         return ex.getResponseCode();
     }
-
+    
     public Headers getResponseHeaders() {
         return ex.getResponseHeaders();
     }
-
+    
     @Override
-	public int hashCode() {
+    public int hashCode() {
         return ex.hashCode();
     }
     
@@ -103,26 +103,26 @@ public class HttpExchangeWrapper {
     public void sendResponseHeaders(int status) throws IOException {
         ex.sendResponseHeaders(status, 0);
     }
-
+    
     public void sendResponseHeaders(int status, long contentLength) throws IOException {
         ex.sendResponseHeaders(status, contentLength);
     }
-
+    
     public void setAttribute(String key, Object value) {
         ex.setAttribute(key, value);
     }
-
+    
     public void setStreams(InputStream in, OutputStream out) {
         ex.setStreams(in, out);
     }
-
+    
     @Override
-	public String toString() {
+    public String toString() {
         return ex.toString();
     }
     
     @Override
-	public boolean equals(Object o) {
+    public boolean equals(Object o) {
         return ex.equals(o);
     }
 }

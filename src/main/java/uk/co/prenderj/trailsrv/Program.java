@@ -5,7 +5,7 @@ import uk.co.prenderj.trailsrv.handler.CommentLoader;
 
 public class Program {
     private static Server srv;
-
+    
     /**
      * Main execution point.
      * @param args command line arguments
@@ -17,7 +17,7 @@ public class Program {
         srv.createContext(new CommentLoader(srv));
         srv.start();
     }
-
+    
     /**
      * Stops the running server. Blocks until terminated.
      */

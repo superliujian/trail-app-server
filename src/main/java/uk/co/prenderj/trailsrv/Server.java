@@ -25,9 +25,9 @@ public class Server {
     private int port;
     private HttpServer srv;
     private DataSource database;
-
+    
     public Server(Properties properties) throws RuntimeException {
-    	initialize(properties);
+        initialize(properties);
     }
     
     /**
@@ -39,28 +39,28 @@ public class Server {
     public Server(String propertiesPath) throws RuntimeException, IOException {
         Properties properties = new Properties();
         try (FileInputStream in = new FileInputStream(new File(propertiesPath))) {
-        	properties.load(in);
+            properties.load(in);
         }
         initialize(properties);
     }
     
     private void initialize(Properties properties) {
-    	try {
+        try {
             this.port = Integer.valueOf(properties.getProperty("Port"));
             srv = HttpServer.create(new InetSocketAddress(port), 0);
             srv.setExecutor(createExecutor());
-
+            
             Log.i("Connecting to database...");
             database = new DataSource(loadProperties());
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
-
+    
     protected Executor createExecutor() {
         return Executors.newCachedThreadPool(); // TODO Tweak settings
     }
-
+    
     protected Map<String, String> loadProperties() {
         // TODO Load from file
         Map<String, String> properties = new HashMap<>();
@@ -69,7 +69,7 @@ public class Server {
         properties.put("jdbcUrl", "jdbc:mysql://localhost/trail");
         return properties;
     }
-
+    
     /**
      * Starts the server.
      */
@@ -77,16 +77,16 @@ public class Server {
         Log.i("Server listening on port " + port);
         srv.start();
     }
-
+    
     public void stop() {
         Log.i("Stopping server...");
         srv.stop(MAX_SHUTDOWN_DELAY);
     }
-
+    
     public void createContext(BaseHandler handler) {
         srv.createContext(handler.getContextPath(), handler);
     }
-
+    
     public DataSource getDatabase() {
         return database;
     }

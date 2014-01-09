@@ -12,9 +12,7 @@ import java.nio.charset.Charset;
  */
 public class Util {
     /**
-     * Converts an input stream into its String equivalent. This method may
-     * block. The underlying stream is fully exhausted and closed by this
-     * method.
+     * Converts an input stream into its String equivalent. This method may block. The underlying stream is fully exhausted and closed by this method.
      * @param in the input stream
      * @param charset the charset
      * @return the string representation of the stream
@@ -30,10 +28,9 @@ public class Util {
             return rv.toString();
         }
     }
-
+    
     /**
-     * Converts an input stream into its String equivalent using UTF-8 encoding.
-     * This method may block. The underlying stream is closed by this method.
+     * Converts an input stream into its String equivalent using UTF-8 encoding. This method may block. The underlying stream is closed by this method.
      * @param in the input stream
      * @return the string representation of the stream
      * @throws IOException if a stream error occurs
@@ -43,7 +40,7 @@ public class Util {
     }
     
     public static String preview(String s, int maxLength) {
-    	String out = s.substring(0, Math.min(s.length(), maxLength));
-    	return out.equals(s) ? out : out + "...";
+        String out = s.substring(0, Math.min(s.length(), maxLength));
+        return out.equals(s) ? out : out + "...";
     }
 }

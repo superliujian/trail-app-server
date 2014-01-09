@@ -21,7 +21,7 @@ public class CommentAdder extends BaseHandler {
     public CommentAdder(Server srv) {
         super(srv, "/comments", "POST");
     }
-
+    
     @Override
     public void call(HttpExchangeWrapper ex) throws Exception {
         try {
@@ -36,7 +36,7 @@ public class CommentAdder extends BaseHandler {
             
             // Store comment in database and cache
             Comment comment = getServer().getDatabase().addComment(lat, lng, title, body, new Timestamp(new Date().getTime())).get(10, TimeUnit.SECONDS);
-            Log.v(String.format("Successfully added comment: '%s'", Util.preview(body, 25))); 
+            Log.v(String.format("Successfully added comment: '%s'", Util.preview(body, 25)));
             
             // Response
             try (CommentWriter writer = new CommentWriter(new OutputStreamWriter(ex.getResponseBody()))) {

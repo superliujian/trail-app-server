@@ -14,10 +14,9 @@ import com.google.common.collect.Iterables;
 
 public class PostParams {
     private Map<String, String> params;
-
+    
     /**
-     * Converts the text stream of a HTTP POST from URL-encoded parameters to a
-     * map of parameters.
+     * Converts the text stream of a HTTP POST from URL-encoded parameters to a map of parameters.
      * @param in the HTTP POST request body. This is consumed and closed.
      * @throws IOException if an IO error occurs
      * @throws IllegalArgumentException if the parameters contain a duplicate value
@@ -44,11 +43,11 @@ public class PostParams {
             throw new AssertionError(e); // This can't happen
         }
     }
-
+    
     public String get(String key) {
         return params.get(key);
     }
-
+    
     public boolean containsKeys(String... keys) {
         for (String key : keys) {
             if (!params.containsKey(key)) {

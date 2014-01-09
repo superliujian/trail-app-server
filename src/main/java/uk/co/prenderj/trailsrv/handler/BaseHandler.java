@@ -15,15 +15,15 @@ public abstract class BaseHandler implements HttpHandler {
     private Server srv;
     private String contextPath;
     private List<String> acceptedMethods;
-
+    
     public BaseHandler(Server srv, String contextPath, String... acceptedMethods) {
         this.srv = srv;
         this.contextPath = contextPath;
         this.acceptedMethods = Arrays.asList(acceptedMethods);
     }
-
+    
     public abstract void call(HttpExchangeWrapper ex) throws Exception;
-
+    
     @Override
     public void handle(HttpExchange ex) throws IOException {
         Log.v(String.format("Request: method = %s, context = %s", ex.getRequestMethod(), getContextPath()));
@@ -39,11 +39,11 @@ public abstract class BaseHandler implements HttpHandler {
             }
         }
     }
-
+    
     public final Server getServer() {
         return srv;
     }
-
+    
     public final String getContextPath() {
         return contextPath;
     }

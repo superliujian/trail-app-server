@@ -23,7 +23,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 public class DataSource {
     private ExecutorService executor;
     private ComboPooledDataSource source;
-
+    
     /**
      * Creates a new database connector instance.
      * @param properties the connection properties
@@ -33,16 +33,16 @@ public class DataSource {
         setupConnector(properties);
         executor = Executors.newCachedThreadPool();
     }
-
+    
     protected void setupConnector(Map<String, String> properties) throws ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver"); // Load the driver
-
+        
         // Disable C3P0 verbose logging
         Properties p = new Properties(System.getProperties());
         p.put("com.mchange.v2.log.MLog", "com.mchange.v2.log.FallbackMLog");
         p.put("com.mchange.v2.log.FallbackMLog.DEFAULT_CUTOFF_LEVEL", "WARNING");
         System.setProperties(p);
-
+        
         // Setup the pooled connector
         source = new ComboPooledDataSource();
         try {
@@ -54,7 +54,7 @@ public class DataSource {
             throw new RuntimeException(e);
         }
     }
-
+    
     /**
      * Adds a comment into the database.
      * @param latitude the comment latitude
@@ -77,12 +77,9 @@ public class DataSource {
                     insert.setString(4, body);
                     insert.setTimestamp(5, timestamp);
                     insert.executeUpdate();
-
+                    
                     /**
-                     * Read the last AUTO_INCREMENT value (comment_id)
-                     * LAST_INSERT_ID() is updated on a per-connection basis
-                     * Since it's one thread per connection at any one time,
-                     * there shouldn't be any concurrency problems... right?
+                     * Read the last AUTO_INCREMENT value (comment_id) LAST_INSERT_ID() is updated on a per-connection basis Since it's one thread per connection at any one time, there shouldn't be any concurrency problems... right?
                      */
                     ResultSet rs = select.executeQuery();
                     rs.next();
@@ -91,10 +88,9 @@ public class DataSource {
             }
         });
     }
-
+    
     /**
-     * Loads nearby comments from the database for processing in a streaming
-     * fashion.
+     * Loads nearby comments from the database for processing in a streaming fashion.
      * @param lat the origin latitude
      * @param lng the origin longitude
      * @param radius the search radius
@@ -113,7 +109,7 @@ public class DataSource {
                     ps.setDouble(3, lng);
                     ps.setDouble(4, lng);
                     ps.setDouble(5, radius * radius);
-
+                    
                     ResultSet rs = ps.executeQuery();
                     proc.call(rs);
                     return null;
