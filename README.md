@@ -1,5 +1,6 @@
 trail-app-server
 ---------
+[![Build Status](http://prenderj.co.uk:8080/buildStatus/icon?job=trail-app-server)](http://prenderj.co.uk:8080/job/trail-app-server/)
 
 The server-side for the Lancaster University nature trail app. It is RESTful Java HTTP server which mediates database access.  
 
@@ -30,4 +31,3 @@ Licensed under the MIT license.
     COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
     IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
     CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
