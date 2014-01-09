@@ -10,7 +10,8 @@ CREATE TABLE comment (
     comment_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     lat DECIMAL(10, 8) NOT NULL, # Decimals to prevent precision loss
     lng DECIMAL(11, 8) NOT NULL,
-    body VARCHAR(255),
+    title VARCHAR(100),
+    body VARCHAR(500),
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY(comment_id)
 );
