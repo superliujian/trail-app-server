@@ -25,7 +25,7 @@ public abstract class BaseHandler implements HttpHandler {
         this.acceptedMethods = Arrays.asList(acceptedMethods);
     }
 
-    public abstract void call(HttpExchangeWrapper ex) throws IOException, RuntimeException;
+    public abstract void call(HttpExchangeWrapper ex) throws Exception;
 
     @Override
     public void handle(HttpExchange ex) throws IOException {
@@ -34,8 +34,9 @@ public abstract class BaseHandler implements HttpHandler {
             HttpExchangeWrapper wrapper = new HttpExchangeWrapper(ex);
             try {
                 call(wrapper);
-            } catch (IOException | RuntimeException e) {
-                wrapper.sendResponseHeaders(400); // Internal server error
+            } catch (Exception e) {
+                wrapper.sendResponseHeaders(500); // Internal server error
+                Log.e("Uncaught exception in handler '" + getClass().getName() + "'", e);
             } finally {
                 wrapper.close();
             }

@@ -41,4 +41,9 @@ public class Util {
     public static String streamToString(InputStream in) throws IOException {
         return streamToString(in, Charset.forName("UTF-8"));
     }
+    
+    public static String preview(String s, int maxLength) {
+    	String out = s.substring(0, Math.min(s.length(), maxLength));
+    	return out.equals(s) ? out : out + "...";
+    }
 }

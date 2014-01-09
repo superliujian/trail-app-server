@@ -15,17 +15,17 @@ import uk.co.prenderj.trailsrv.model.Comment;
 import uk.co.prenderj.trailsrv.net.HttpExchangeWrapper;
 import uk.co.prenderj.trailsrv.net.PostParams;
 import uk.co.prenderj.trailsrv.util.Log;
-
+import uk.co.prenderj.trailsrv.util.Util;
 import au.com.bytecode.opencsv.CSVWriter;
 
 
 public class CommentAdder extends BaseHandler {
     public CommentAdder(Server srv) {
-        super(srv, "/comments");
+        super(srv, "/comments", "POST");
     }
 
     @Override
-    public void call(HttpExchangeWrapper ex) throws IOException {
+    public void call(HttpExchangeWrapper ex) throws Exception {
         try {
             PostParams params = new PostParams(ex.getRequestBody());
             if (!params.containsKeys("lat", "lng", "body")) {
@@ -33,16 +33,16 @@ public class CommentAdder extends BaseHandler {
             }
             BigDecimal lat = new BigDecimal(params.get("lat"));
             BigDecimal lng = new BigDecimal(params.get("lng"));
-            String body = params.get("body");
+            String body = params.get("body"); // TODO Limit size
             
             // Store comment in database and cache
             Comment comment = getServer().getDatabase().addComment(lat, lng, body, new Timestamp(new Date().getTime())).get(10, TimeUnit.SECONDS);
-            Log.v("Successfully added comment");
+            Log.v(String.format("Successfully added comment: '%s'", Util.preview(body, 25))); 
             
             // Response
             try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(ex.getResponseBody()))) {
-                ex.setContentType("text/plain");
-                ex.sendResponseHeaders(200, 0);
+                ex.setContentType("text/csv");
+                ex.sendResponseHeaders(200);
                 new CommentWriteProc(comment).process(writer); // Respond with created resource
             }
         } catch (IllegalArgumentException e) {

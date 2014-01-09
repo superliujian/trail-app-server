@@ -22,8 +22,7 @@ public class Log {
         logger = Logger.getLogger("trail-srv");
         logger.setLevel(Level.ALL);
 
-        // Default behaviour displays a long info line; replace this with a nice
-        // timestamp
+        // Default behaviour displays a long info line; replace this with a nice timestamp
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(new SimpleFormatter() {
             @Override

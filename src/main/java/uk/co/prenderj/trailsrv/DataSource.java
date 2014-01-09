@@ -93,17 +93,27 @@ public class DataSource {
     }
 
     /**
-     * Loads all comments from the database for processing in a streaming
+     * Loads nearby comments from the database for processing in a streaming
      * fashion.
+     * @param lat the origin latitude
+     * @param lng the origin longitude
+     * @param radius the search radius
+     * @param proc the processor to run on the ResultSet
      * @return a Future which returns null on success
      */
-    public Future<?> loadComments(final Processor<ResultSet> proc) {
+    public Future<?> findNearbyComments(final BigDecimal lat, final BigDecimal lng, final BigDecimal radius, final Processor<ResultSet> proc) {
         return executor.submit(new Callable<Object>() {
             @Override
             public Collection<?> call() throws Exception {
                 try (Connection conn = source.getConnection();
-                        PreparedStatement ps = conn.prepareStatement("SELECT * FROM comment", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
+                        PreparedStatement ps = conn.prepareStatement("SELECT * FROM comment WHERE (lat - ?) * (lat - ?) + (lng - ?) * (lng - ?) < ? * ?", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY)) {
                     ps.setFetchSize(Integer.MIN_VALUE); // Retrieve row by row to avoid overloading heap
+                    ps.setBigDecimal(1, lat);
+                    ps.setBigDecimal(2, lat);
+                    ps.setBigDecimal(3, lng);
+                    ps.setBigDecimal(4, lng);
+                    ps.setBigDecimal(5, radius);
+                    ps.setBigDecimal(6, radius);
 
                     ResultSet rs = ps.executeQuery();
                     proc.call(rs);
