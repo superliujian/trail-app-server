@@ -69,7 +69,7 @@ public class DataSource {
             public Comment call() throws SQLException {
                 // Insert a new comment using prepared statements
                 try (Connection conn = source.getConnection();
-                        PreparedStatement insert = conn.prepareStatement("INSERT INTO comment (lat, lng, title, body, timestamp) VALUES(?, ?, ?, ?)");
+                        PreparedStatement insert = conn.prepareStatement("INSERT INTO comment (lat, lng, title, body, timestamp) VALUES(?, ?, ?, ?, ?)");
                         PreparedStatement select = conn.prepareStatement("SELECT LAST_INSERT_ID()")) {
                     insert.setDouble(1, latitude);
                     insert.setDouble(2, longitude);
