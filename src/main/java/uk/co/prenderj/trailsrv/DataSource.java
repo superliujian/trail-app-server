@@ -29,12 +29,12 @@ public class DataSource {
      * @param properties the connection properties
      * @throws ClassNotFoundException if the MySQL JDBC driver is not found
      */
-    public DataSource(Map<String, String> properties) throws ClassNotFoundException {
+    public DataSource(Properties properties) throws ClassNotFoundException {
         setupConnector(properties);
         executor = Executors.newCachedThreadPool();
     }
     
-    protected void setupConnector(Map<String, String> properties) throws ClassNotFoundException {
+    protected void setupConnector(Properties properties) throws ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver"); // Load the driver
         
         // Disable C3P0 verbose logging
@@ -46,9 +46,9 @@ public class DataSource {
         // Setup the pooled connector
         source = new ComboPooledDataSource();
         try {
-            source.setUser(properties.get("user"));
-            source.setPassword(properties.get("password"));
-            source.setJdbcUrl(properties.get("jdbcUrl"));
+            source.setUser(properties.getProperty("DbUser"));
+            source.setPassword(properties.getProperty("DbPassword"));
+            source.setJdbcUrl(properties.getProperty("DbUrl"));
             source.setDriverClass("com.mysql.jdbc.Driver");
         } catch (PropertyVetoException e) {
             throw new RuntimeException(e);
@@ -79,7 +79,8 @@ public class DataSource {
                     insert.executeUpdate();
                     
                     /**
-                     * Read the last AUTO_INCREMENT value (comment_id) LAST_INSERT_ID() is updated on a per-connection basis Since it's one thread per connection at any one time, there shouldn't be any concurrency problems... right?
+                     * Read the last AUTO_INCREMENT value (comment_id) LAST_INSERT_ID() is updated on a per-connection basis
+                     * Since it's one thread per connection at any one time, there shouldn't be any concurrency problems... right?
                      */
                     ResultSet rs = select.executeQuery();
                     rs.next();

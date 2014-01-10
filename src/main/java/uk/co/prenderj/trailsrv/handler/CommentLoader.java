@@ -18,18 +18,18 @@ public class CommentLoader extends BaseHandler {
     private static final double RADIUS = 0.5d;
     
     public CommentLoader(Server srv) {
-        super(srv, "/comments/nearby", "GET");
+        super(srv, "/nearby", "GET");
     }
     
     @Override
     public void call(final HttpExchangeWrapper ex) throws Exception {
         try {
             // Grab the last two segments of the URI as longitude and latitude
-            // e.g. www.example.com/comments/nearby/25/-2.5
+            // e.g. www.example.com/nearby/25/-2.5
             URI uri = ex.getRequestURI();
             String[] segments = uri.getPath().split("/");
-            double lat = Double.parseDouble(segments[3]);
-            double lng = Double.parseDouble(segments[4]);
+            double lat = Double.parseDouble(segments[2]);
+            double lng = Double.parseDouble(segments[3]);
             
             // Response
             try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(ex.getResponseBody()))) {

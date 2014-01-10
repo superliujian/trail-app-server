@@ -51,7 +51,7 @@ public class Server {
             srv.setExecutor(createExecutor());
             
             Log.i("Connecting to database...");
-            database = new DataSource(loadProperties());
+            database = new DataSource(properties);
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -59,15 +59,6 @@ public class Server {
     
     protected Executor createExecutor() {
         return Executors.newCachedThreadPool(); // TODO Tweak settings
-    }
-    
-    protected Map<String, String> loadProperties() {
-        // TODO Load from file
-        Map<String, String> properties = new HashMap<>();
-        properties.put("user", "root");
-        properties.put("password", "");
-        properties.put("jdbcUrl", "jdbc:mysql://localhost/trail");
-        return properties;
     }
     
     /**
