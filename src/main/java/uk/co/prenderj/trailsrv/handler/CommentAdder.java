@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import uk.co.prenderj.trailsrv.DataSource;
 import uk.co.prenderj.trailsrv.Server;
 import uk.co.prenderj.trailsrv.csv.CommentWriter;
 import uk.co.prenderj.trailsrv.model.Comment;
@@ -18,8 +19,11 @@ import uk.co.prenderj.trailsrv.util.Log;
 import uk.co.prenderj.trailsrv.util.Util;
 
 public class CommentAdder extends BaseHandler {
-    public CommentAdder(Server srv) {
-        super(srv, "/comments", "POST");
+    private DataSource dataSource;
+    
+    public CommentAdder(DataSource dataSource) {
+        super("/comments", "POST");
+        this.dataSource = dataSource;
     }
     
     @Override
@@ -35,7 +39,7 @@ public class CommentAdder extends BaseHandler {
             String body = params.get("body"); // TODO Limit size
             
             // Store comment in database and cache
-            Comment comment = getServer().getDatabase().addComment(lat, lng, title, body, new Timestamp(new Date().getTime())).get(10, TimeUnit.SECONDS);
+            Comment comment = dataSource.addComment(lat, lng, title, body, new Timestamp(new Date().getTime())).get(10, TimeUnit.SECONDS);
             Log.v(String.format("Successfully added comment: '%s'", Util.preview(body, 25)));
             
             // Response

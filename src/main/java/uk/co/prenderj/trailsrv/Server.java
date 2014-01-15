@@ -1,14 +1,13 @@
 package uk.co.prenderj.trailsrv;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 import uk.co.prenderj.trailsrv.handler.BaseHandler;
 import uk.co.prenderj.trailsrv.util.Log;
@@ -16,18 +15,26 @@ import uk.co.prenderj.trailsrv.util.Log;
 import com.sun.net.httpserver.HttpServer;
 
 /**
- * Serves HTTP requests using threads.
+ * Serves HTTP requests.
  * @author Joshua Prendergast
  */
+@SuppressWarnings("restriction")
 public class Server {
     private static final int MAX_SHUTDOWN_DELAY = 10;
-    private Properties properties;
+    private Configuration config;
     private int port;
     private HttpServer srv;
     private DataSource database;
     
-    public Server(Properties properties) throws RuntimeException {
-        initialize(properties);
+    public Server(Configuration config) throws IOException, ClassNotFoundException {
+        this.config = config;
+        
+        this.port = config.getInt("Port");
+        srv = HttpServer.create(new InetSocketAddress(port), 0);
+        srv.setExecutor(createExecutor());
+        
+        Log.i("Connecting to database...");
+        database = new DataSource(config);
     }
     
     /**
@@ -35,26 +42,11 @@ public class Server {
      * @param port the port to listen on
      * @throws RuntimeException if the server failed to start
      * @throws IOException if the properties file cannot be accessed
+     * @throws ConfigurationException if the properties file is invalid
+     * @throws ClassNotFoundException if the JDBC driver cannot be found
      */
-    public Server(String propertiesPath) throws RuntimeException, IOException {
-        Properties properties = new Properties();
-        try (FileInputStream in = new FileInputStream(new File(propertiesPath))) {
-            properties.load(in);
-        }
-        initialize(properties);
-    }
-    
-    private void initialize(Properties properties) {
-        try {
-            this.port = Integer.valueOf(properties.getProperty("Port"));
-            srv = HttpServer.create(new InetSocketAddress(port), 0);
-            srv.setExecutor(createExecutor());
-            
-            Log.i("Connecting to database...");
-            database = new DataSource(properties);
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    public Server(String configPath) throws ClassNotFoundException, IOException, ConfigurationException {
+        this(new PropertiesConfiguration(configPath));
     }
     
     protected Executor createExecutor() {
@@ -80,5 +72,9 @@ public class Server {
     
     public DataSource getDatabase() {
         return database;
+    }
+    
+    public Configuration getConfig() {
+        return config;
     }
 }

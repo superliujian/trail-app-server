@@ -15,6 +15,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.apache.commons.configuration.Configuration;
+
 import uk.co.prenderj.trailsrv.model.Comment;
 import uk.co.prenderj.trailsrv.util.Processor;
 
@@ -29,12 +31,12 @@ public class DataSource {
      * @param properties the connection properties
      * @throws ClassNotFoundException if the MySQL JDBC driver is not found
      */
-    public DataSource(Properties properties) throws ClassNotFoundException {
-        setupConnector(properties);
+    public DataSource(Configuration config) throws ClassNotFoundException {
+        setupConnector(config);
         executor = Executors.newCachedThreadPool();
     }
     
-    protected void setupConnector(Properties properties) throws ClassNotFoundException {
+    protected void setupConnector(Configuration config) throws ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver"); // Load the driver
         
         // Disable C3P0 verbose logging
@@ -46,9 +48,9 @@ public class DataSource {
         // Setup the pooled connector
         source = new ComboPooledDataSource();
         try {
-            source.setUser(properties.getProperty("DbUser"));
-            source.setPassword(properties.getProperty("DbPassword"));
-            source.setJdbcUrl(properties.getProperty("DbUrl"));
+            source.setUser(config.getString("DbUser"));
+            source.setPassword(config.getString("DbPassword"));
+            source.setJdbcUrl(config.getString("DbUrl"));
             source.setDriverClass("com.mysql.jdbc.Driver");
         } catch (PropertyVetoException e) {
             throw new RuntimeException(e);

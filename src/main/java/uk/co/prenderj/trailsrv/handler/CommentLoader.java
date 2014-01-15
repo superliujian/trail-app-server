@@ -2,12 +2,12 @@ package uk.co.prenderj.trailsrv.handler;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import uk.co.prenderj.trailsrv.DataSource;
 import uk.co.prenderj.trailsrv.Server;
 import uk.co.prenderj.trailsrv.csv.CommentWriter;
 import uk.co.prenderj.trailsrv.model.Comment;
@@ -15,10 +15,13 @@ import uk.co.prenderj.trailsrv.net.HttpExchangeWrapper;
 import uk.co.prenderj.trailsrv.util.Processor;
 
 public class CommentLoader extends BaseHandler {
-    private static final double RADIUS = 0.5d;
+    private DataSource dataSource;
+    private float radius;
     
-    public CommentLoader(Server srv) {
-        super(srv, "/nearby", "GET");
+    public CommentLoader(DataSource dataSource, float radius) {
+        super("/nearby", "GET");
+        this.dataSource = dataSource;
+        this.radius = radius; // TODO Convert to KM
     }
     
     @Override
@@ -35,7 +38,7 @@ public class CommentLoader extends BaseHandler {
             try (CSVWriter writer = new CSVWriter(new OutputStreamWriter(ex.getResponseBody()))) {
                 ex.setContentType("text/csv");
                 ex.sendResponseHeaders(200);
-                getServer().getDatabase().findNearbyComments(lat, lng, RADIUS, new Processor<ResultSet>() {
+                dataSource.findNearbyComments(lat, lng, radius, new Processor<ResultSet>() {
                     @Override
                     public void call(ResultSet rs) throws RuntimeException {
                         try (CommentWriter writer = new CommentWriter(new OutputStreamWriter(ex.getResponseBody()))) {

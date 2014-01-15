@@ -12,12 +12,10 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public abstract class BaseHandler implements HttpHandler {
-    private Server srv;
     private String contextPath;
     private List<String> acceptedMethods;
     
-    public BaseHandler(Server srv, String contextPath, String... acceptedMethods) {
-        this.srv = srv;
+    public BaseHandler(String contextPath, String... acceptedMethods) {
         this.contextPath = contextPath;
         this.acceptedMethods = Arrays.asList(acceptedMethods);
     }
@@ -38,10 +36,6 @@ public abstract class BaseHandler implements HttpHandler {
                 wrapper.close();
             }
         }
-    }
-    
-    public final Server getServer() {
-        return srv;
     }
     
     public final String getContextPath() {
