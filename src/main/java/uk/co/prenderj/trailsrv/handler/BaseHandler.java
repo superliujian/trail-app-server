@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.co.prenderj.trailsrv.Server;
 import uk.co.prenderj.trailsrv.net.HttpExchangeWrapper;
 import uk.co.prenderj.trailsrv.util.Log;
 
@@ -30,8 +29,8 @@ public abstract class BaseHandler implements HttpHandler {
             try {
                 call(wrapper);
             } catch (Exception e) {
-                wrapper.sendResponseHeaders(500); // Internal server error
                 Log.e("Uncaught exception in handler '" + getClass().getName() + "'", e);
+                wrapper.sendResponseHeaders(500); // Internal server error
             } finally {
                 wrapper.close();
             }

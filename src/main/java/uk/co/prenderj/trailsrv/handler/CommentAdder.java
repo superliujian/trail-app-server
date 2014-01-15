@@ -2,7 +2,6 @@ package uk.co.prenderj.trailsrv.handler;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
@@ -10,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import uk.co.prenderj.trailsrv.DataSource;
-import uk.co.prenderj.trailsrv.Server;
 import uk.co.prenderj.trailsrv.csv.CommentWriter;
 import uk.co.prenderj.trailsrv.model.Comment;
 import uk.co.prenderj.trailsrv.net.HttpExchangeWrapper;
@@ -39,13 +37,13 @@ public class CommentAdder extends BaseHandler {
             String body = params.get("body"); // TODO Limit size
             
             // Store comment in database and cache
-            Comment comment = dataSource.addComment(lat, lng, title, body, new Timestamp(new Date().getTime())).get(10, TimeUnit.SECONDS);
+            Comment comment = dataSource.addComment(lat, lng, title, body, new Timestamp(new Date().getTime())).get(5, TimeUnit.SECONDS);
             Log.v(String.format("Successfully added comment: '%s'", Util.preview(body, 25)));
             
             // Response
+            ex.setContentType("text/csv");
+            ex.sendResponseHeaders(200);
             try (CommentWriter writer = new CommentWriter(new OutputStreamWriter(ex.getResponseBody()))) {
-                ex.setContentType("text/csv");
-                ex.sendResponseHeaders(200);
                 writer.writeNextComment(comment);
             }
         } catch (IllegalArgumentException e) {

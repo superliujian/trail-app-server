@@ -1,14 +1,12 @@
 package uk.co.prenderj.trailsrv;
 
 import java.beans.PropertyVetoException;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -18,8 +16,8 @@ import java.util.concurrent.Future;
 import org.apache.commons.configuration.Configuration;
 
 import uk.co.prenderj.trailsrv.model.Comment;
-import uk.co.prenderj.trailsrv.util.Processor;
 
+import com.google.common.base.Function;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class DataSource {
@@ -97,10 +95,10 @@ public class DataSource {
      * @param lat the origin latitude
      * @param lng the origin longitude
      * @param radius the search radius
-     * @param proc the processor to run on the ResultSet
+     * @param proc the function to run on the ResultSet
      * @return a Future which returns null on success
      */
-    public Future<?> findNearbyComments(final double lat, final double lng, final double radius, final Processor<ResultSet> proc) {
+    public Future<?> findNearbyComments(final double lat, final double lng, final double radius, final Function<ResultSet, Void> proc) {
         return executor.submit(new Callable<Object>() {
             @Override
             public Collection<?> call() throws Exception {
@@ -114,7 +112,7 @@ public class DataSource {
                     ps.setDouble(5, radius * radius);
                     
                     ResultSet rs = ps.executeQuery();
-                    proc.call(rs);
+                    proc.apply(rs);
                     return null;
                 }
             }
