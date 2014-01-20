@@ -1,4 +1,4 @@
-package uk.co.prenderj.trailsrv;
+package uk.co.prenderj.trailsrv.storage;
 
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.Callable;
@@ -15,11 +16,17 @@ import java.util.concurrent.Future;
 
 import org.apache.commons.configuration.Configuration;
 
+import uk.co.prenderj.trailsrv.model.Attachment;
 import uk.co.prenderj.trailsrv.model.Comment;
 
 import com.google.common.base.Function;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.mysql.jdbc.Statement;
 
+/**
+ * The database controller.
+ * @author Joshua Prendergast
+ */
 public class DataSource {
     private ExecutorService executor;
     private ComboPooledDataSource source;
@@ -55,27 +62,38 @@ public class DataSource {
         }
     }
     
+    protected <T> Future<T> queueTask(Callable<T> callable) {
+        return executor.submit(callable);
+    }
+    
     /**
      * Adds a comment into the database.
      * @param latitude the comment latitude
      * @param longitude the comment longitude
      * @param body the comment text
+     * @param attachment the attachment (or null)
      * @param timestamp the comment date of receipt
      * @return a Future which contains the new comment
      */
-    public Future<Comment> addComment(final double latitude, final double longitude, final String title, final String body, final Timestamp timestamp) {
-        return executor.submit(new Callable<Comment>() {
+    public Future<Comment> insertComment(final double latitude, final double longitude, final String title, final String body, final Attachment attachment, final Timestamp timestamp) {
+        return queueTask(new Callable<Comment>() {
             @Override
             public Comment call() throws SQLException {
                 // Insert a new comment using prepared statements
                 try (Connection conn = source.getConnection();
-                        PreparedStatement insert = conn.prepareStatement("INSERT INTO comment (lat, lng, title, body, timestamp) VALUES(?, ?, ?, ?, ?)");
+                        PreparedStatement insert = conn.prepareStatement("INSERT INTO comment (lat, lng, title, body, attachment_id, timestamp) VALUES(?, ?, ?, ?, ?, ?)");
                         PreparedStatement select = conn.prepareStatement("SELECT LAST_INSERT_ID()")) {
                     insert.setDouble(1, latitude);
                     insert.setDouble(2, longitude);
                     insert.setString(3, title);
                     insert.setString(4, body);
-                    insert.setTimestamp(5, timestamp);
+                    insert.setTimestamp(6, timestamp);
+                    
+                    if (attachment == null) {
+                        insert.setNull(5, Types.BIGINT);
+                    } else {
+                        insert.setLong(5, attachment.id);
+                    }
                     insert.executeUpdate();
                     
                     /**
@@ -90,6 +108,38 @@ public class DataSource {
         });
     }
     
+    public Future<Attachment> insertAttachmentRecord() {
+        return queueTask(new Callable<Attachment>() {
+            @Override
+            public Attachment call() throws Exception {
+                try (Connection conn = source.getConnection();
+                        PreparedStatement insert = conn.prepareStatement("INSERT INTO attachment");
+                        PreparedStatement select = conn.prepareStatement("SELECT LAST_INSERT_ID()")) {
+                    insert.executeUpdate();
+                    
+                    ResultSet rs = select.executeQuery();
+                    rs.next();
+                    return new Attachment(rs.getInt(1));
+                }
+            }
+        });
+    }
+    
+    public Future<Boolean> doesAttachmentExist(final long attachmentId) {
+        return queueTask(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                try (Connection conn = source.getConnection();
+                        PreparedStatement select = conn.prepareStatement("SELECT attachment_id FROM attachment WHERE attachment_id = ?")) {
+                    select.setLong(1, attachmentId);
+                    
+                    ResultSet rs = select.executeQuery();
+                    return rs.next();
+                }
+            }
+        });
+    }
+    
     /**
      * Loads nearby comments from the database for processing in a streaming fashion.
      * @param lat the origin latitude
@@ -98,8 +148,8 @@ public class DataSource {
      * @param proc the function to run on the ResultSet
      * @return a Future which returns null on success
      */
-    public Future<?> findNearbyComments(final double lat, final double lng, final double radius, final Function<ResultSet, Void> proc) {
-        return executor.submit(new Callable<Object>() {
+    public Future<?> selectNearbyComments(final double lat, final double lng, final double radius, final Function<ResultSet, Void> proc) {
+        return queueTask(new Callable<Object>() {
             @Override
             public Collection<?> call() throws Exception {
                 try (Connection conn = source.getConnection();

@@ -31,6 +31,8 @@ public class CommentWriter extends CSVWriter {
     }
     
     public void writeNextComment(Comment comment) {
-        writeNext(new String[] { String.valueOf(comment.id), String.valueOf(comment.latitude), String.valueOf(comment.longitude), comment.title, comment.body, comment.timestamp.toString() });
+        String[] csv = new String[] { Long.toString(comment.id), Double.toString(comment.latitude), String.valueOf(comment.longitude),
+                comment.title, comment.body, Long.toString(comment.attachmentId), comment.timestamp.toString() };
+        writeNext(csv);
     }
 }

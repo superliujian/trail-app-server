@@ -13,5 +13,12 @@ CREATE TABLE comment (
     title VARCHAR(100),
     body VARCHAR(500),
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    attachment_id INT UNSIGNED,
     PRIMARY KEY(comment_id)
+    FOREIGN KEY(attachment)
 );
+
+CREATE TABLE attachment {
+	attachment_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY(attachment_id)
+}

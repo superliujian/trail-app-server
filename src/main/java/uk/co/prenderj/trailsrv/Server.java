@@ -10,6 +10,8 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 import uk.co.prenderj.trailsrv.handler.BaseHandler;
+import uk.co.prenderj.trailsrv.storage.DataSource;
+import uk.co.prenderj.trailsrv.storage.FileSource;
 import uk.co.prenderj.trailsrv.util.Log;
 
 import com.sun.net.httpserver.HttpServer;
@@ -25,6 +27,7 @@ public class Server {
     private int port;
     private HttpServer srv;
     private DataSource database;
+    private FileSource fileSource;
     
     public Server(Configuration config) throws IOException, ClassNotFoundException {
         this.config = config;
@@ -35,6 +38,9 @@ public class Server {
         
         Log.i("Connecting to database...");
         database = new DataSource(config);
+        
+        Log.i("Connecting file source...");
+        fileSource = new FileSource(config);
     }
     
     /**
@@ -72,6 +78,10 @@ public class Server {
     
     public DataSource getDatabase() {
         return database;
+    }
+    
+    public FileSource getFileSource() {
+        return fileSource;
     }
     
     public Configuration getConfig() {

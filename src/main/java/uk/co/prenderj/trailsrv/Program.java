@@ -4,8 +4,9 @@ import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
 
-import uk.co.prenderj.trailsrv.handler.CommentAdder;
-import uk.co.prenderj.trailsrv.handler.CommentLoader;
+import uk.co.prenderj.trailsrv.handler.InsertHandler;
+import uk.co.prenderj.trailsrv.handler.LoadNearbyHandler;
+import uk.co.prenderj.trailsrv.handler.ViewAttachmentHandler;
 import uk.co.prenderj.trailsrv.util.Log;
 
 public class Program {
@@ -27,8 +28,9 @@ public class Program {
         } 
         
         try {
-            srv.createContext(new CommentAdder(srv.getDatabase()));
-            srv.createContext(new CommentLoader(srv.getDatabase(), srv.getConfig().getFloat("LoadRadiusKm")));
+            srv.createContext(new InsertHandler(srv.getDatabase(), srv.getFileSource()));
+            srv.createContext(new LoadNearbyHandler(srv.getDatabase(), srv.getConfig().getFloat("LoadRadiusKm")));
+            srv.createContext(new ViewAttachmentHandler(srv.getDatabase(), srv.getFileSource()));
             srv.start();
         } catch (Exception e) {
             Log.e("Uncaught exception in runtime", e);
