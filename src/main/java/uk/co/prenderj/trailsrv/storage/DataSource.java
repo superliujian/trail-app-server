@@ -21,7 +21,6 @@ import uk.co.prenderj.trailsrv.model.Comment;
 
 import com.google.common.base.Function;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.mysql.jdbc.Statement;
 
 /**
  * The database controller.
@@ -68,14 +67,10 @@ public class DataSource {
     
     /**
      * Adds a comment into the database.
-     * @param latitude the comment latitude
-     * @param longitude the comment longitude
-     * @param body the comment text
-     * @param attachment the attachment (or null)
-     * @param timestamp the comment date of receipt
+     * @param spec the comment specification
      * @return a Future which contains the new comment
      */
-    public Future<Comment> insertComment(final double latitude, final double longitude, final String title, final String body, final Attachment attachment, final Timestamp timestamp) {
+    public Future<Comment> insertComment(final CommentSpec spec) {
         return queueTask(new Callable<Comment>() {
             @Override
             public Comment call() throws SQLException {
@@ -83,16 +78,16 @@ public class DataSource {
                 try (Connection conn = source.getConnection();
                         PreparedStatement insert = conn.prepareStatement("INSERT INTO comment (lat, lng, title, body, attachment_id, timestamp) VALUES(?, ?, ?, ?, ?, ?)");
                         PreparedStatement select = conn.prepareStatement("SELECT LAST_INSERT_ID()")) {
-                    insert.setDouble(1, latitude);
-                    insert.setDouble(2, longitude);
-                    insert.setString(3, title);
-                    insert.setString(4, body);
-                    insert.setTimestamp(6, timestamp);
+                    insert.setDouble(1, spec.latitude);
+                    insert.setDouble(2, spec.longitude);
+                    insert.setString(3, spec.title);
+                    insert.setString(4, spec.body);
+                    insert.setTimestamp(6, spec.timestamp);
                     
-                    if (attachment == null) {
+                    if (spec.attachment == null) {
                         insert.setNull(5, Types.BIGINT);
                     } else {
-                        insert.setLong(5, attachment.id);
+                        insert.setLong(5, spec.attachment.id);
                     }
                     insert.executeUpdate();
                     
@@ -102,7 +97,7 @@ public class DataSource {
                      */
                     ResultSet rs = select.executeQuery();
                     rs.next();
-                    return new Comment(rs.getInt(1), latitude, longitude, title, body, timestamp);
+                    return new Comment(rs.getInt(1), spec.latitude, spec.longitude, spec.title, spec.body, spec.timestamp);
                 }
             }
         });
@@ -113,7 +108,7 @@ public class DataSource {
             @Override
             public Attachment call() throws Exception {
                 try (Connection conn = source.getConnection();
-                        PreparedStatement insert = conn.prepareStatement("INSERT INTO attachment");
+                        PreparedStatement insert = conn.prepareStatement("INSERT INTO attachment () VALUES()");
                         PreparedStatement select = conn.prepareStatement("SELECT LAST_INSERT_ID()")) {
                     insert.executeUpdate();
                     

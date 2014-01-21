@@ -14,11 +14,11 @@ CREATE TABLE comment (
     body VARCHAR(500),
     timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     attachment_id INT UNSIGNED,
-    PRIMARY KEY(comment_id)
-    FOREIGN KEY(attachment)
+    PRIMARY KEY(comment_id),
+    FOREIGN KEY(attachment_id) REFERENCES attachment(attachment_id)
 );
 
-CREATE TABLE attachment {
+CREATE TABLE attachment (
 	attachment_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY(attachment_id)
-}
+);

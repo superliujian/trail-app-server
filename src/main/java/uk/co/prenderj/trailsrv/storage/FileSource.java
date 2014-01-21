@@ -17,7 +17,6 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.AccessControlList;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 
@@ -36,7 +35,12 @@ public class FileSource {
         clientConfig.setProtocol(Protocol.HTTPS);
 
         conn = new AmazonS3Client(credentials, clientConfig);
-        conn.setEndpoint(config.getString("S3Endpoint"));
+        
+        // Check for configuration end-point (not required)
+        String endPoint = config.getString("S3Endpoint");
+        if (endPoint != null) {
+            conn.setEndpoint(endPoint);
+        }
         
         bucketName = config.getString("S3BucketName");
     }
@@ -45,16 +49,17 @@ public class FileSource {
      * Stores the stream under the given file name and access rights.
      * @param filename the filename
      * @param is the input stream
+     * @param md the metadata. Must contain content-length
      * @param access the access rights
      */
-    public void storeFile(String filename, InputStream is, CannedAccessControlList access) {
-        conn.putObject(bucketName, filename, is, new ObjectMetadata());
+    public void storeFile(String filename, InputStream is, ObjectMetadata md, CannedAccessControlList access) {
+        conn.putObject(bucketName, filename, is, md);
         conn.setObjectAcl(bucketName, filename, access);
     }
     
-    public void storeFile(File file, CannedAccessControlList access) throws FileNotFoundException, IOException {
+    public void storeFile(File file, ObjectMetadata md, CannedAccessControlList access) throws FileNotFoundException, IOException {
         try (FileInputStream is = new FileInputStream(file)) {
-            storeFile(file.getName(), is, access);
+            storeFile(file.getName(), is, md, access);
         }
     }
     
