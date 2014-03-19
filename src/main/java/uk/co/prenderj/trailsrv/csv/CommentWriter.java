@@ -33,7 +33,7 @@ public class CommentWriter extends CSVWriter {
     public void writeNextComment(Comment comment) {
         String[] csv = new String[] { Long.toString(comment.id),
                 Double.toString(comment.latitude),
-                String.valueOf(comment.longitude),
+                Double.toString(comment.longitude),
                 comment.title, comment.body,
                 comment.attachment == null ? "-1" : Long.toString(comment.attachment.id),
                 comment.timestamp.toString() };

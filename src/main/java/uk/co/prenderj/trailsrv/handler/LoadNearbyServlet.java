@@ -69,7 +69,7 @@ public class LoadNearbyServlet extends BaseServlet {
                     return null;
                 } catch (IOException | SQLException e) {
                     throw new RuntimeException(e);
-                } 
+                }
             }
         }).get(5, TimeUnit.SECONDS);
     }

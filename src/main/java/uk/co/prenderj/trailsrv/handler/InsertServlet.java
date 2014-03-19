@@ -88,7 +88,7 @@ public class InsertServlet extends BaseServlet {
                         ObjectMetadata md = new ObjectMetadata();
                         md.setContentLength(item.getSize());
                         md.setContentType(item.getContentType()); // TODO Filter non-audio / image
-                        md.setContentDisposition(item.getName());
+                        // md.setContentDisposition("attachment_"); // TODO
                         getServer().getFileSource().storeFile(Long.toString(attachment.id), is, md, CannedAccessControlList.Private);
                     }
                 }
